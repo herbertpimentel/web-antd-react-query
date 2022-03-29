@@ -3,21 +3,33 @@ import { Menu } from 'antd';
 import {
   DesktopOutlined,
   PieChartOutlined,
-  FileOutlined,
-  TeamOutlined,
-  UserOutlined,
+  SettingOutlined,
+  BarsOutlined,
+  PoweroffOutlined,
 } from '@ant-design/icons';
 
-import { useAppContext } from './app-context';
 import { Link } from 'react-router-dom';
+import { useRouteMatch } from 'react-router-dom';
 
-export const AppMenu = () => {
-  const { user } = useAppContext();
+import { useAppContext } from './app-context';
+
+export const AppMenu = ({ collapsed }) => {
+  const { user, clear } = useAppContext();
 
   const isAuthenticated = !!user;
 
+  const routeMatch = useRouteMatch();
+
   return (
-    <Menu theme="dark" defaultSelectedKeys={['login']} mode="inline">
+    <Menu
+      defaultSelectedKeys={[routeMatch.path.replace('/', '')]}
+      style={{
+        backgroundColor: 'transparent',
+        borderRightColor: 'transparent',
+      }}
+      className={['side-menu', !collapsed ? 'side-menu-non-collapsed' : '']}
+      mode="inline"
+    >
       {!isAuthenticated && (
         <>
           <Menu.Item key="login" icon={<PieChartOutlined />}>
@@ -33,19 +45,32 @@ export const AppMenu = () => {
       {isAuthenticated && (
         <>
           <Menu.Item key="home" icon={<DesktopOutlined />}>
-            <Link to="/home">Home</Link>
+            <Link to="/home">Início</Link>
           </Menu.Item>
-          <Menu.SubMenu key="sub1" icon={<UserOutlined />} title="User">
-            <Menu.Item key="3">Tom</Menu.Item>
-            <Menu.Item key="4">Bill</Menu.Item>
-            <Menu.Item key="5">Alex</Menu.Item>
+          <Menu.SubMenu
+            key="financeiro"
+            icon={<BarsOutlined />}
+            title="Financeiro"
+          >
+            <Menu.Item key="3">Entradas</Menu.Item>
+            <Menu.Item key="4">Saídas</Menu.Item>
+            <Menu.Item key="5">Contas</Menu.Item>
           </Menu.SubMenu>
-          <Menu.SubMenu key="sub2" icon={<TeamOutlined />} title="Team">
-            <Menu.Item key="6">Team 1</Menu.Item>
-            <Menu.Item key="8">Team 2</Menu.Item>
+          <Menu.SubMenu
+            key="sub2"
+            icon={<SettingOutlined />}
+            title="Configurações"
+          >
+            <Menu.Item key="usuarios">
+              <Link to="/usuarios">Contas de usuários</Link>
+            </Menu.Item>
+            <Menu.Item key="parametros">Parâmetros de sistema</Menu.Item>
+            <Menu.Item key="tabelas">Tabelas de sistema</Menu.Item>
+            <Menu.Item key="arquivos">Arquivos</Menu.Item>
+            <Menu.Item key="backups">Backups</Menu.Item>
           </Menu.SubMenu>
-          <Menu.Item key="9" icon={<FileOutlined />}>
-            Files
+          <Menu.Item key="100" icon={<PoweroffOutlined />} onClick={clear}>
+            Desconectar
           </Menu.Item>
         </>
       )}

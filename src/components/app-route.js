@@ -2,7 +2,7 @@ import React from 'react';
 
 import { Route, useHistory } from 'react-router-dom';
 
-import LayoutRegular from './layout/layout-regular';
+import { AppLayout } from './layout/layout';
 
 import { Button, Result } from 'antd';
 import { useAppContext } from '../app-context';
@@ -51,8 +51,10 @@ export const AppRoute = ({
 
   return (
     <Route {...rest}>
-      {layout === 'regular' && <LayoutRegular>{returnChildren}</LayoutRegular>}
-      {layout === 'none' && returnChildren}
+      {layout === 'regular' && <AppLayout>{returnChildren}</AppLayout>}
+      {layout === 'none' && (
+        <div style={{ height: '100%' }}>{returnChildren}</div>
+      )}
     </Route>
   );
 };

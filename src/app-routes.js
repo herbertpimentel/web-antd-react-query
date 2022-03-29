@@ -13,7 +13,7 @@ export const AppRoutes = () => {
         <HomePage />
       </AppRoute>
 
-      <AppRoute path="/login" requiresLogin={false} layout="regular">
+      <AppRoute path="/login" requiresLogin={false} layout="none">
         <LoginPage />
       </AppRoute>
 

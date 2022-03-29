@@ -1,7 +1,6 @@
 import styled from 'styled-components';
 
 export const Logo = styled.div`
-  height: 32px;
+  height: 40px;
   background: #fff;
-  max-width: 200px;
 `;

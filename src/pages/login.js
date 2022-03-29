@@ -1,16 +1,34 @@
-import { Button } from 'antd';
+import { Button, Space } from 'antd';
 import { Redirect } from 'react-router-dom';
 
-import { Form, Input } from 'antd';
+import { Form, Input, notification } from 'antd';
 
 import { useAppContext } from '../app-context';
 
-export const LoginPage = () => {
-  const { user, setUser } = useAppContext();
+import { useLoginMutation } from '../lib/api';
+import { PageTitle } from '../components/PageTitle';
+import { Link } from 'react-router-dom';
 
-  const handleLogin = (values) => {
-    console.log('Success:', values);
-    setUser(values);
+export const LoginPage = () => {
+  const { user, setUser, setToken } = useAppContext();
+
+  const loginMutation = useLoginMutation();
+
+  const handleLogin = async (values) => {
+    try {
+      const loginResponse = await loginMutation.mutateAsync({
+        user: values.username,
+        password: values.password,
+      });
+
+      setToken('<token retornado da api ex: loginResonse.token >');
+      setUser(loginResponse?.user);
+    } catch (err) {
+      notification.error({
+        message: 'Nãofoi possível fazer login',
+        description: err.message,
+      });
+    }
   };
 
   if (user) {
@@ -18,32 +36,64 @@ export const LoginPage = () => {
   }
 
   return (
-    <div style={{ maxWidth: '300px' }}>
-      <h1>Login</h1>
+    <div
+      style={{
+        height: '100%',
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+      }}
+    >
+      <div
+        style={{
+          backgroundColor: 'rgba(230,228,229, 0.26)',
+          border: '1px solid #E1E3E3',
+          borderRadius: '12px',
+          width: '540px',
+          padding: '40px 60px',
+        }}
+      >
+        <PageTitle>Login</PageTitle>
 
-      <Form onFinish={handleLogin} layout="vertical" autoComplete="off">
-        <Form.Item
-          label="Nome de usuário"
-          name="username"
-          rules={[{ required: true, message: 'Digite o nome de usuário' }]}
+        <Form
+          onFinish={handleLogin}
+          layout="vertical"
+          autoComplete="off"
+          style={{ marginTop: '20px' }}
+          size="large"
         >
-          <Input />
-        </Form.Item>
+          <Form.Item
+            label="Nome de usuário"
+            name="username"
+            rules={[{ required: true, message: 'Digite o nome de usuário' }]}
+          >
+            <Input />
+          </Form.Item>
 
-        <Form.Item
-          label="Senha"
-          name="password"
-          rules={[{ required: true, message: 'Digite a senha' }]}
-        >
-          <Input.Password />
-        </Form.Item>
+          <Form.Item
+            label="Senha"
+            name="password"
+            rules={[{ required: true, message: 'Digite a senha' }]}
+          >
+            <Input.Password />
+          </Form.Item>
 
-        <Form.Item>
-          <Button type="primary" htmlType="submit">
-            Entrar
-          </Button>
-        </Form.Item>
-      </Form>
+          <Space size="small">
+            <Button
+              type="primary"
+              htmlType="submit"
+              style={{ width: '180px' }}
+              loading={loginMutation.isLoading}
+            >
+              Entrar
+            </Button>
+
+            <Link to="/password-recovery">
+              <Button type="link">Esqueci minha senha</Button>
+            </Link>
+          </Space>
+        </Form>
+      </div>
     </div>
   );
 };
